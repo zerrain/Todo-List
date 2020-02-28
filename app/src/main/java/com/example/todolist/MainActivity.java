@@ -3,6 +3,7 @@ package com.example.todolist;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,7 +22,11 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 import java.lang.reflect.Array;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         todoListRecyclerView.setHasFixedSize(true);
 
-        tasks = new ArrayList<>();
+        loadTasks();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         todoListRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.Adapter tasksAdapter = new TasksAdapter(tasks);
@@ -75,10 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     addTask();
                     hideKeyboard();
-                    newTaskEditText.setCursorVisible(false);
-                    newTaskEditText.setText(null);
-                    newTaskEditTextLayout.setVisibility(View.GONE);
-                    newTaskEditTextLayout.setVisibility(View.VISIBLE);
+                    resetEditTextStyle();
                     return true;
                 }
                 return false;
@@ -95,9 +97,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addTask() {
-        if (!newTaskEditText.getText().toString().isEmpty())
+        if (!newTaskEditText.getText().toString().isEmpty()) {
             tasks.add(newTaskEditText.getText().toString());
+            saveTasks();
+        }
         else
             Toast.makeText(this, "No task entered", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadTasks() {
+        File filesDir = getFilesDir();
+        File tasksFile = new File(filesDir, "tasks.txt");
+        try {
+            tasks = new ArrayList<String>(FileUtils.readLines(tasksFile));
+        } catch (Exception e) {
+            e.printStackTrace();
+            tasks = new ArrayList<>();
+        }
+    }
+
+    private void saveTasks() {
+        File filesDir = getFilesDir();
+        File tasksFile = new File(filesDir, "tasks.txt");
+        try {
+            FileUtils.writeLines(tasksFile, tasks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void resetEditTextStyle() {
+        newTaskEditText.setCursorVisible(false);
+        newTaskEditText.setText(null);
+        newTaskEditTextLayout.setVisibility(View.GONE);
+        newTaskEditTextLayout.setVisibility(View.VISIBLE);
     }
 }
