@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         loadTasks();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         todoListRecyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter tasksAdapter = new TasksAdapter(tasks);
+        RecyclerView.Adapter tasksAdapter = new TasksAdapter(tasks, this);
         todoListRecyclerView.setAdapter(tasksAdapter);
 
         //Enables the newTaskEditText cursor when it is tapped on
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No task entered", Toast.LENGTH_SHORT).show();
     }
 
-    private void loadTasks() {
+    public void loadTasks() {
         File filesDir = getFilesDir();
         File tasksFile = new File(filesDir, "tasks.txt");
         try {
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void saveTasks() {
+    public void saveTasks() {
         File filesDir = getFilesDir();
         File tasksFile = new File(filesDir, "tasks.txt");
         try {
