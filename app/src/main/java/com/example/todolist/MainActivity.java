@@ -34,14 +34,8 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.mainToolbar)
-    MaterialToolbar mainToolbar;
     @BindView(R.id.todoListRecyclerView)
     RecyclerView todoListRecyclerView;
-    @BindView(R.id.newTaskEditText)
-    TextInputEditText newTaskEditText;
-    @BindView(R.id.newTaskEditTextLayout)
-    TextInputLayout newTaskEditTextLayout;
 
     ArrayList<String> tasks;
 
@@ -54,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        setSupportActionBar(mainToolbar);
 
         todoListRecyclerView.setHasFixedSize(true);
 
@@ -64,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.Adapter tasksAdapter = new TasksAdapter(tasks, this);
         todoListRecyclerView.setAdapter(tasksAdapter);
 
-        //Enables the newTaskEditText cursor when it is tapped on
+        /*//Enables the newTaskEditText cursor when it is tapped on
         newTaskEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,13 +78,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
 
         //Light mode status bar with black icons
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
-    private void hideKeyboard() {
+    /*private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(newTaskEditText.getWindowToken(), 0);
     }
@@ -103,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
             Toast.makeText(this, "No task entered", Toast.LENGTH_SHORT).show();
-    }
+    }*/
 
     public void loadTasks() {
         File filesDir = getFilesDir();
@@ -126,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void resetEditTextStyle() {
+   /* private void resetEditTextStyle() {
         newTaskEditText.setCursorVisible(false);
         newTaskEditText.setText(null);
         newTaskEditTextLayout.setVisibility(View.GONE);
         newTaskEditTextLayout.setVisibility(View.VISIBLE);
-    }
+    }*/
 }
