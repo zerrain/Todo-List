@@ -1,32 +1,20 @@
 package com.example.todolist;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.nio.file.Files;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -36,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.todoListRecyclerView)
     RecyclerView todoListRecyclerView;
+    @BindView(R.id.bottomAppBar)
+    BottomAppBar bottomAppBar;
+    @BindView(R.id.addTaskFAB)
+    FloatingActionButton addTaskFAB;
 
     ArrayList<String> tasks;
 
@@ -50,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
 
         todoListRecyclerView.setHasFixedSize(true);
+        setSupportActionBar(bottomAppBar);
 
         loadTasks();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -125,4 +118,13 @@ public class MainActivity extends AppCompatActivity {
         newTaskEditTextLayout.setVisibility(View.GONE);
         newTaskEditTextLayout.setVisibility(View.VISIBLE);
     }*/
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (android.R.id.home == item.getItemId()) {
+            BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
+            bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
