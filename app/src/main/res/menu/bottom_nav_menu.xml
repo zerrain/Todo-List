@@ -5,13 +5,16 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/tasksCurrentNavItem"
-            android:title="Current Tasks"/>
+            android:title="Current Tasks"
+            android:icon="@drawable/ic_baseline_directions_current_24"/>
         <item
             android:id="@+id/tasksCompletedNavItem"
-            android:title="Completed Tasks"/>
+            android:title="Completed Tasks"
+            android:icon="@drawable/ic_baseline_completed_24"/>
         <item
             android:id="@+id/tasksArchivedNavItem"
-            android:title="Archived Tasks"/>
+            android:title="Archived Tasks"
+            android:icon="@drawable/ic_baseline_archived_24"/>
     </group>
 
     <group
@@ -19,12 +22,15 @@
         android:checkableBehavior="none">
         <item
             android:id="@+id/helpNavItem"
-            android:title="Help"/>
+            android:title="Help"
+            android:icon="@drawable/ic_baseline_help_24"/>
         <item
             android:id="@+id/settingsNavItem"
-            android:title="Settings"/>
+            android:title="Settings"
+            android:icon="@drawable/ic_baseline_settings_24"/>
         <item
             android:id="@+id/exitNavItem"
-            android:title="Exit"/>
+            android:title="Exit"
+            android:icon="@drawable/ic_baseline_exit_to_app_24"/>
     </group>
 </menu>

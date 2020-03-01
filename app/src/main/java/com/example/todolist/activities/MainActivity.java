@@ -1,4 +1,4 @@
-package com.example.todolist;
+package com.example.todolist.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -6,9 +6,13 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.todolist.fragments.BottomNavigationDrawerFragment;
+import com.example.todolist.R;
+import com.example.todolist.TasksAdapter;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.addTaskFAB)
     FloatingActionButton addTaskFAB;
 
+    BottomNavigationDrawerFragment bottomNavigationDrawerFragment;
+
     ArrayList<String> tasks;
 
     @Override
@@ -37,12 +43,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
+
     }
 
     private void initView() {
 
         todoListRecyclerView.setHasFixedSize(true);
         setSupportActionBar(bottomAppBar);
+        bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
 
         loadTasks();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -50,16 +58,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.Adapter tasksAdapter = new TasksAdapter(tasks, this);
         todoListRecyclerView.setAdapter(tasksAdapter);
 
-        /*//Enables the newTaskEditText cursor when it is tapped on
-        newTaskEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (v.getId() == newTaskEditText.getId())
-                    newTaskEditText.setCursorVisible(true);
-            }
-        });
-
-        //Functionality when done is pressed on the keyboard for the newTaskEditText
+        /*Functionality when done is pressed on the keyboard for the newTaskEditText
         newTaskEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -112,19 +111,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-   /* private void resetEditTextStyle() {
-        newTaskEditText.setCursorVisible(false);
-        newTaskEditText.setText(null);
-        newTaskEditTextLayout.setVisibility(View.GONE);
-        newTaskEditTextLayout.setVisibility(View.VISIBLE);
-    }*/
+   public void hideFragment() {
+       FragmentManager fragmentManager = getSupportFragmentManager();
+       fragmentManager.beginTransaction().remove(bottomNavigationDrawerFragment).commit();
+   }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (android.R.id.home == item.getItemId()) {
-            BottomNavigationDrawerFragment bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
+        if (android.R.id.home == item.getItemId())
             bottomNavigationDrawerFragment.show(getSupportFragmentManager(), bottomNavigationDrawerFragment.getTag());
-        }
         return super.onOptionsItemSelected(item);
     }
 }
