@@ -77,7 +77,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     private void deleteItem(TasksViewHolder holder, View v) {
         if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
             tasks.remove(holder.getAdapterPosition());
-            ((MainActivity) context).saveTasks();
+            //((MainActivity) context).saveTasks();
             notifyItemRemoved(holder.getAdapterPosition());
             Toast.makeText(v.getContext(), "del pressed", Toast.LENGTH_SHORT).show();
         }
@@ -86,7 +86,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     private void completeItem (TasksViewHolder holder, View v) {
         if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
             tasks.remove(holder.getAdapterPosition());
-            ((MainActivity) context).saveTasks();
+            //((MainActivity) context).saveTasks();
             notifyItemRemoved(holder.getAdapterPosition());
             Toast.makeText(v.getContext(), "complete pressed", Toast.LENGTH_SHORT).show();
         }
