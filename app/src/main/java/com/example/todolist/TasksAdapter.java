@@ -84,6 +84,35 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         }
     }
 
+    public void swipeToDeleteItem(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            tasks.remove(position);
+            ((MainActivity) context).deleteTask(tasks);
+            notifyItemRemoved(position);
+            Toast.makeText(context, "del swiped", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void swipeToArchiveItem(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            String archivedTask = tasks.get(position);
+            tasks.remove(position);
+            ((MainActivity) context).addArchivedTask(tasks, archivedTask);
+            notifyItemRemoved(position);
+            Toast.makeText(context, "arch swiped", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void swipeToUnarchiveItem(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            String archivedTask = tasks.get(position);
+            tasks.remove(position);
+            ((MainActivity) context).revertToCurrentTask(tasks, archivedTask);
+            notifyItemRemoved(position);
+            Toast.makeText(context, "unarch swiped", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void completeItem(TasksViewHolder holder, View v) {
         if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
             String completedTask = tasks.get(holder.getAdapterPosition());
@@ -92,5 +121,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             notifyItemRemoved(holder.getAdapterPosition());
             Toast.makeText(v.getContext(), "complete pressed", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

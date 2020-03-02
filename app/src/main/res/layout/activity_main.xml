@@ -11,7 +11,8 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/mainToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="30dp"/>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -36,7 +37,7 @@
         app:elevation="3dp"
         app:fabAlignmentMode="end"
         app:hideOnScroll="true"
-        app:navigationIcon="@drawable/ic_baseline_menu_24"/>
+        app:navigationIcon="@drawable/ic_baseline_menu_28"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTaskFAB"
@@ -44,7 +45,7 @@
         android:layout_height="wrap_content"
         app:elevation="1dp"
         android:backgroundTint="#82e8de"
-        android:src="@drawable/ic_baseline_add_24"
+        android:src="@drawable/ic_baseline_add_32"
         app:layout_anchor="@id/bottomAppBar"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

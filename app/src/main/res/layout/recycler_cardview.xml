@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="7"
+            android:textColor="@android:color/black"
             android:textSize="22sp"/>
 
         <androidx.appcompat.widget.AppCompatImageView

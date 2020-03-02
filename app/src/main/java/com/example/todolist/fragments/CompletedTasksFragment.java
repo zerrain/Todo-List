@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
+import com.example.todolist.SwipeToDeleteArchiveCallback;
 import com.example.todolist.TasksAdapter;
 import com.example.todolist.activities.MainActivity;
 
@@ -56,6 +58,8 @@ public class CompletedTasksFragment extends Fragment {
         completedTasksRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.Adapter completedTasksAdapter = new TasksAdapter(completedTasks, getContext());
         completedTasksRecyclerView.setAdapter(completedTasksAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteArchiveCallback((TasksAdapter) completedTasksAdapter, "completed"));
+        itemTouchHelper.attachToRecyclerView(completedTasksRecyclerView);
 
         //Hides/Shows FAB on scroll down/up
         completedTasksRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
