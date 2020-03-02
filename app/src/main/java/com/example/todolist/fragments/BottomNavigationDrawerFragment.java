@@ -21,12 +21,6 @@ import com.google.android.material.navigation.NavigationView;
 
 public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
-    private enum NavMenuStates {
-        CURRENT_TASKS, COMPLETED_TASKS, ARCHIVED_TASKS, SETTINGS
-    }
-
-    private NavMenuStates currentState = NavMenuStates.CURRENT_TASKS;
-
     public BottomNavigationDrawerFragment() {
         // Required empty public constructor
     }
@@ -61,19 +55,19 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
 
                 switch (item.getItemId()) {
                     case R.id.tasksCurrentNavItem:
-                        switchToCurrentTasks();
+                        ((MainActivity)getActivity()).switchToCurrentTasks();
                         break;
                     case R.id.tasksCompletedNavItem:
-                        switchToCompletedTasks();
+                        ((MainActivity)getActivity()).switchToCompletedTasks();
                         break;
                     case R.id.tasksArchivedNavItem:
-                        switchToArchivedTasks();
+                        ((MainActivity)getActivity()).switchToArchivedTasks();
                         break;
                     case R.id.settingsNavItem:
-                        showSettingsFragment();
+                        ((MainActivity)getActivity()).showSettingsFragment();
                         break;
                     case R.id.helpNavItem:
-                        showHelpDialog();
+                        ((MainActivity)getActivity()).showHelpDialog();
                         break;
                     case R.id.exitNavItem:
                         getActivity().finish();
@@ -83,51 +77,5 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                 return true;
             }
         });
-    }
-
-    private void switchToCurrentTasks() {
-        if (currentState != NavMenuStates.CURRENT_TASKS) {
-            currentState = NavMenuStates.CURRENT_TASKS;
-            ((MainActivity)getActivity()).replaceFragment(new CurrentTasksFragment());
-        }
-    }
-
-    private void switchToCompletedTasks() {
-        if (currentState != NavMenuStates.COMPLETED_TASKS) {
-            currentState = NavMenuStates.COMPLETED_TASKS;
-            ((MainActivity)getActivity()).replaceFragment(new CompletedTasksFragment());
-        }
-    }
-
-    private void switchToArchivedTasks() {
-        if (currentState != NavMenuStates.ARCHIVED_TASKS) {
-            currentState = NavMenuStates.ARCHIVED_TASKS;
-            ((MainActivity)getActivity()).replaceFragment(new ArchivedTasksFragment());
-        }
-    }
-
-    private void showSettingsFragment() {
-        if (currentState != NavMenuStates.SETTINGS) {
-            currentState = NavMenuStates.SETTINGS;
-            ((MainActivity)getActivity()).replaceFragment(new SettingsFragment());
-        }
-    }
-
-    private void showHelpDialog() {
-        AlertDialog helpDialog = new AlertDialog.Builder(getContext()).create();
-        helpDialog.setTitle("Help");
-        helpDialog.setMessage("Swipe right to archive, left to delete");
-        helpDialog.getWindow().setBackgroundDrawableResource(R.drawable.help_dialog_bg);
-        helpDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-        helpDialog.show();
-        helpDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-        helpDialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(Color.WHITE);
     }
 }

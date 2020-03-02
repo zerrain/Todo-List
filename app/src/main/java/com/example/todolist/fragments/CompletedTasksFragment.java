@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
 import com.example.todolist.TasksAdapter;
+import com.example.todolist.activities.MainActivity;
 
 import org.apache.commons.io.FileUtils;
 
@@ -30,6 +32,10 @@ public class CompletedTasksFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public CompletedTasksFragment(ArrayList<String> completedTasks) {
+        this.completedTasks = completedTasks;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,30 +51,22 @@ public class CompletedTasksFragment extends Fragment {
     }
 
     private void initView(View view) {
-        loadCompletedTasks();
         completedTasksRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         completedTasksRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.Adapter completedTasksAdapter = new TasksAdapter(completedTasks, getContext());
         completedTasksRecyclerView.setAdapter(completedTasksAdapter);
-    }
 
-    public void loadCompletedTasks() {
-        File tasksFile = new File(getContext().getFilesDir(), "completedTasks.txt");
-        try {
-            completedTasks = new ArrayList<>(FileUtils.readLines(tasksFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-            completedTasks = new ArrayList<>();
-        }
-    }
-
-    public void saveCompletedTasks() {
-        File tasksFile = new File(getContext().getFilesDir(), "completedTasks.txt");
-        try {
-            FileUtils.writeLines(tasksFile, completedTasks);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //Hides/Shows FAB on scroll down/up
+        completedTasksRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0)
+                    ((MainActivity)getActivity()).hideFAB();
+                else if (dy < 0)
+                    ((MainActivity)getActivity()).showFAB();
+            }
+        });
     }
 }

@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.activities.MainActivity;
+import com.example.todolist.fragments.CurrentTasksFragment;
 
 import java.util.ArrayList;
 
@@ -64,7 +65,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         taskCompleteCheckIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    completeItem(holder, v);
+                completeItem(holder, v);
             }
         });
     }
@@ -77,16 +78,17 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     private void deleteItem(TasksViewHolder holder, View v) {
         if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
             tasks.remove(holder.getAdapterPosition());
-            //((MainActivity) context).saveTasks();
+            ((MainActivity) context).deleteTask(tasks);
             notifyItemRemoved(holder.getAdapterPosition());
             Toast.makeText(v.getContext(), "del pressed", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void completeItem (TasksViewHolder holder, View v) {
+    private void completeItem(TasksViewHolder holder, View v) {
         if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
+            String completedTask = tasks.get(holder.getAdapterPosition());
             tasks.remove(holder.getAdapterPosition());
-            //((MainActivity) context).saveTasks();
+            ((MainActivity) context).addCompletedTask(tasks, completedTask);
             notifyItemRemoved(holder.getAdapterPosition());
             Toast.makeText(v.getContext(), "complete pressed", Toast.LENGTH_SHORT).show();
         }

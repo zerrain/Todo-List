@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
 import com.example.todolist.TasksAdapter;
+import com.example.todolist.activities.MainActivity;
 
 import org.apache.commons.io.FileUtils;
 
@@ -30,6 +32,10 @@ public class ArchivedTasksFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public ArchivedTasksFragment(ArrayList<String> archivedTasks) {
+        this.archivedTasks = archivedTasks;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,30 +51,22 @@ public class ArchivedTasksFragment extends Fragment {
     }
 
     private void initView(View view) {
-        loadArchivedTasks();
         archivedTasksRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         archivedTasksRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.Adapter archivedTasksAdapter = new TasksAdapter(archivedTasks, getContext());
         archivedTasksRecyclerView.setAdapter(archivedTasksAdapter);
-    }
 
-    public void loadArchivedTasks() {
-        File tasksFile = new File(getContext().getFilesDir(), "archivedTasks.txt");
-        try {
-            archivedTasks = new ArrayList<>(FileUtils.readLines(tasksFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-            archivedTasks = new ArrayList<>();
-        }
-    }
-
-    public void saveArchivedTasks() {
-        File tasksFile = new File(getContext().getFilesDir(), "archivedTasks.txt");
-        try {
-            FileUtils.writeLines(tasksFile, archivedTasks);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //Hides/Shows FAB on scroll down/up
+        archivedTasksRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0)
+                    ((MainActivity)getActivity()).hideFAB();
+                else if (dy < 0)
+                    ((MainActivity)getActivity()).showFAB();
+            }
+        });
     }
 }

@@ -5,16 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
 import com.example.todolist.TasksAdapter;
+import com.example.todolist.activities.MainActivity;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -28,6 +32,10 @@ public class CurrentTasksFragment extends Fragment {
 
     public CurrentTasksFragment() {
         // Required empty public constructor
+    }
+
+    public CurrentTasksFragment(ArrayList<String> currentTasks) {
+        this.currentTasks = currentTasks;
     }
 
     @Override
@@ -45,30 +53,22 @@ public class CurrentTasksFragment extends Fragment {
     }
 
     private void initView(View view) {
-        loadCurrentTasks();
         currentTasksRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         currentTasksRecyclerView.setLayoutManager(layoutManager);
         RecyclerView.Adapter currentTasksAdapter = new TasksAdapter(currentTasks, getContext());
         currentTasksRecyclerView.setAdapter(currentTasksAdapter);
-    }
 
-    public void loadCurrentTasks() {
-        File tasksFile = new File(getContext().getFilesDir(), "currentTasks.txt");
-        try {
-            currentTasks = new ArrayList<>(FileUtils.readLines(tasksFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-            currentTasks = new ArrayList<>();
-        }
-    }
-
-    public void saveCurrentTasks() {
-        File tasksFile = new File(getContext().getFilesDir(), "currentTasks.txt");
-        try {
-            FileUtils.writeLines(tasksFile, currentTasks);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //Hides/Shows FAB on scroll down/up
+        currentTasksRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0)
+                    ((MainActivity)getActivity()).hideFAB();
+                else if (dy < 0)
+                    ((MainActivity)getActivity()).showFAB();
+            }
+        });
     }
 }

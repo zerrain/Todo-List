@@ -19,7 +19,7 @@
 
     <group
         android:id="@+id/bottomNavGroup"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none">
         <item
             android:id="@+id/settingsNavItem"
             android:title="Settings"
