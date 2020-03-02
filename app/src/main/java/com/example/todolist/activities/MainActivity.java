@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.example.todolist.fragments.ArchivedTasksFragment;
 import com.example.todolist.fragments.BottomNavigationDrawerFragment;
 import com.example.todolist.fragments.CompletedTasksFragment;
 import com.example.todolist.fragments.CurrentTasksFragment;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     BottomAppBar bottomAppBar;
     @BindView(R.id.addTaskFAB)
     FloatingActionButton addTaskFAB;
+    @BindView(R.id.mainToolbar)
+    MaterialToolbar mainToolbar;
 
     private NavMenuStates currentState = NavMenuStates.CURRENT_TASKS;
     private BottomNavigationDrawerFragment bottomNavigationDrawerFragment;
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         setSupportActionBar(bottomAppBar);
+        mainToolbar.setTitle("Current Tasks");
         bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
         currentTasksFile = new File(getFilesDir(), "currentTasks.txt");
         completedTasksFile = new File(getFilesDir(), "completedTasks.txt");
@@ -121,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     public void addCurrentTask(String newCurrentTask) {
         currentTasks.add(newCurrentTask);
         saveCurrentTasks(currentTasks);
+        Toast.makeText(this, "Task Added", Toast.LENGTH_SHORT).show();
     }
 
     public void deleteTask(ArrayList<String> tasks) {
@@ -173,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
             loadCurrentTasks();
             fragment = new CurrentTasksFragment(currentTasks);
             replaceFragment(fragment);
+            mainToolbar.setTitle("Current Tasks");
         }
     }
 
@@ -182,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
             loadCompletedTasks();
             fragment = new CompletedTasksFragment(completedTasks);
             replaceFragment(fragment);
+            mainToolbar.setTitle("Completed Tasks");
         }
     }
 
@@ -191,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             loadArchivedTasks();
             fragment = new ArchivedTasksFragment(archivedTasks);
             replaceFragment(fragment);
+            mainToolbar.setTitle("Archived Tasks");
         }
     }
 
@@ -228,8 +237,6 @@ public class MainActivity extends AppCompatActivity {
     public void loadCurrentTasks() {
         try {
             currentTasks = new ArrayList<>(FileUtils.readLines(currentTasksFile));
-            for (int i = 0; i < 25; i++)
-                currentTasks.add(Integer.toString(i));
         } catch (IOException e) {
             e.printStackTrace();
             currentTasks = new ArrayList<>();
