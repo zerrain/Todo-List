@@ -6,15 +6,15 @@
         <item
             android:id="@+id/tasksCurrentNavItem"
             android:title="Current Tasks"
-            android:icon="@drawable/ic_baseline_directions_current_32"/>
+            android:icon="@drawable/ic_baseline_directions_current_24"/>
         <item
             android:id="@+id/tasksCompletedNavItem"
             android:title="Completed Tasks"
-            android:icon="@drawable/ic_baseline_completed_32"/>
+            android:icon="@drawable/ic_baseline_completed_24"/>
         <item
             android:id="@+id/tasksArchivedNavItem"
             android:title="Archived Tasks"
-            android:icon="@drawable/ic_baseline_archived_32"/>
+            android:icon="@drawable/ic_baseline_archived_24"/>
     </group>
 
     <group
@@ -23,15 +23,15 @@
         <item
             android:id="@+id/settingsNavItem"
             android:title="Settings"
-            android:icon="@drawable/ic_baseline_settings_32"/>
+            android:icon="@drawable/ic_baseline_settings_24"/>
         <item
             android:id="@+id/helpNavItem"
             android:title="Help"
             android:checkable="false"
-            android:icon="@drawable/ic_baseline_help_32"/>
+            android:icon="@drawable/ic_baseline_help_24"/>
         <item
             android:id="@+id/exitNavItem"
             android:title="Exit"
-            android:icon="@drawable/ic_baseline_exit_to_app_32"/>
+            android:icon="@drawable/ic_baseline_exit_to_app_24"/>
     </group>
 </menu>

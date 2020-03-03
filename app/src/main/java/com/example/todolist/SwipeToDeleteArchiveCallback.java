@@ -23,9 +23,9 @@ public class SwipeToDeleteArchiveCallback extends ItemTouchHelper.SimpleCallback
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         tasksAdapter = adapter;
         currentFragment = fragment;
-        deleteIcon = ContextCompat.getDrawable(tasksAdapter.getContext(), R.drawable.ic_baseline_delete_32);
+        deleteIcon = ContextCompat.getDrawable(tasksAdapter.getContext(), R.drawable.ic_baseline_delete_24);
         deleteBG = (GradientDrawable) ContextCompat.getDrawable(tasksAdapter.getContext(), R.drawable.delete_swipe_bg);
-        archiveIcon = ContextCompat.getDrawable(tasksAdapter.getContext(), R.drawable.ic_baseline_archived_32);
+        archiveIcon = ContextCompat.getDrawable(tasksAdapter.getContext(), R.drawable.ic_baseline_archived_24);
         archiveBG = (GradientDrawable) ContextCompat.getDrawable(tasksAdapter.getContext(), R.drawable.archive_swipe_bg);
     }
 

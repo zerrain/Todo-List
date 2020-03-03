@@ -67,9 +67,9 @@ public class CompletedTasksFragment extends Fragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0)
-                    ((MainActivity)getActivity()).hideFAB();
+                    ((MainActivity) getActivity()).hideFAB();
                 else if (dy < 0)
-                    ((MainActivity)getActivity()).showFAB();
+                    ((MainActivity) getActivity()).showFAB();
             }
         });
     }

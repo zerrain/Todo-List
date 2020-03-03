@@ -12,7 +12,7 @@
         android:id="@+id/mainToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="30dp"/>
+        android:paddingHorizontal="30dp" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </androidx.cardview.widget.CardView>
 
@@ -34,18 +34,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:backgroundTint="@color/colorPrimary"
-        app:elevation="3dp"
+        app:elevation="1dp"
         app:fabAlignmentMode="end"
-        app:hideOnScroll="true"
-        app:navigationIcon="@drawable/ic_baseline_menu_28"/>
+        app:hideOnScroll="false"
+        app:navigationIcon="@drawable/ic_baseline_menu_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addTaskFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:elevation="1dp"
         android:backgroundTint="#82e8de"
-        android:src="@drawable/ic_baseline_add_32"
-        app:layout_anchor="@id/bottomAppBar"/>
+        android:src="@drawable/ic_baseline_add_24"
+        app:elevation="0dp"
+        app:layout_anchor="@id/bottomAppBar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

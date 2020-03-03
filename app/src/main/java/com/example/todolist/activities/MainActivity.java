@@ -77,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
         loadCurrentTasks();
         loadCompletedTasks();
         loadArchivedTasks();
+        fragment = new CurrentTasksFragment(currentTasks);
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.fragmentContainer, new CurrentTasksFragment(currentTasks)).commit();
+        fragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
 
         //Light mode status bar with black icons
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -98,7 +99,12 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        addCurrentTask(newTaskEditText.getText().toString());
+                        if (newTaskEditText.getText().toString().isEmpty())
+                            Toast.makeText(MainActivity.this, "No Task Entered!", Toast.LENGTH_SHORT).show();
+                        else {
+                            addCurrentTask(newTaskEditText.getText().toString());
+                            Toast.makeText(getBaseContext(), "Task Added", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -126,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
     public void addCurrentTask(String newCurrentTask) {
         currentTasks.add(newCurrentTask);
         saveCurrentTasks(currentTasks);
-        Toast.makeText(this, "Task Added", Toast.LENGTH_SHORT).show();
     }
 
     public void deleteTask(ArrayList<String> tasks) {
@@ -292,6 +297,10 @@ public class MainActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public String getCurrentState() {
+        return currentState.toString();
     }
 
     @Override

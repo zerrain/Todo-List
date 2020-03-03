@@ -5,4 +5,6 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="colorCheckedNavItem">#E9E9E9</color>
     <color name="colorDividerColor">#333333</color>
+    <color name="colorCardViewBG">#FAFAFA</color>
+    <color name="colorTasksText">#888888</color>
 </resources>
