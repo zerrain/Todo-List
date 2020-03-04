@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
 import com.example.todolist.SwipeToDeleteArchiveCallback;
+import com.example.todolist.Task;
 import com.example.todolist.TasksAdapter;
 import com.example.todolist.activities.MainActivity;
 
@@ -25,13 +26,13 @@ public class CurrentTasksFragment extends Fragment {
 
     @BindView(R.id.currentTasksRecyclerView)
     RecyclerView currentTasksRecyclerView;
-    private ArrayList<String> currentTasks;
+    private ArrayList<Task> currentTasks;
 
     public CurrentTasksFragment() {
         // Required empty public constructor
     }
 
-    public CurrentTasksFragment(ArrayList<String> currentTasks) {
+    public CurrentTasksFragment(ArrayList<Task> currentTasks) {
         this.currentTasks = currentTasks;
     }
 

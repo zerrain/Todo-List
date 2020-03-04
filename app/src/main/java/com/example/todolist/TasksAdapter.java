@@ -2,10 +2,10 @@ package com.example.todolist;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,32 +15,37 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.activities.MainActivity;
-import com.google.android.material.checkbox.MaterialCheckBox;
-
-import org.w3c.dom.Text;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHolder> {
     private ImageView tasksCompletedImageView;
     private ImageView tasksUndoCompletedImageView;
-    private ArrayList<String> tasks;
+    private ArrayList<Task> tasks;
     private Context context;
+    private Snackbar undoSnackbar;
+    public Task lastDeletedTask;
+    public int lastDeletedTaskPosition;
 
     public static class TasksViewHolder extends RecyclerView.ViewHolder {
         public CardView cardView;
         public TextView textViewTitle;
         public TextView textViewText;
+        public TextView tasksDateAddedTextView;
+        public TextView tasksDateEditedTextView;
 
         public TasksViewHolder(CardView v) {
             super(v);
             cardView = v;
             textViewTitle = v.findViewById(R.id.tasksTitleTextView);
             textViewText = v.findViewById(R.id.tasksTextView);
+            tasksDateAddedTextView = v.findViewById(R.id.tasksDateAddedTextView);
+            tasksDateEditedTextView = v.findViewById(R.id.tasksDateEditedTextView);
         }
     }
 
-    public TasksAdapter(ArrayList<String> tasks, Context context) {
+    public TasksAdapter(ArrayList<Task> tasks, Context context) {
         this.tasks = new ArrayList<>();
         this.tasks = tasks;
         this.context = context;
@@ -59,30 +64,67 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     @Override
     public void onBindViewHolder(final TasksViewHolder holder, final int position) {
-        holder.textViewTitle.setText(tasks.get(position));
+        initHolderViews(holder);
+    }
+
+    private void initHolderViews(TasksViewHolder holder) {
+        int taskPosition = holder.getLayoutPosition();
+        holder.textViewTitle.setText(tasks.get(taskPosition).getTaskTitle());
+        holder.textViewText.setText(tasks.get(taskPosition).getTaskText());
+        holder.tasksDateAddedTextView.setText(tasks.get(taskPosition).getDateAdded());
+        holder.tasksDateEditedTextView.setText(tasks.get(taskPosition).getDateLastEdited());
 
         if (((MainActivity) context).getCurrentState().equals("COMPLETED_TASKS")) {
             tasksCompletedImageView.setVisibility(View.GONE);
             tasksUndoCompletedImageView.setVisibility(View.VISIBLE);
-            tasksUndoCompletedImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    undoCompleteItem(holder);
-                }
-            });
+            tasksUndoCompletedImageView.setOnClickListener(v -> undoCompleteItem(holder));
 
-            holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.textViewText.setPaintFlags(holder.textViewText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            if (holder.textViewTitle.getText().toString().equals(" ")) {
+                holder.textViewTitle.setVisibility(View.GONE);
+                holder.textViewText.setPaintFlags(holder.textViewText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else if (holder.textViewText.getText().toString().equals(" ")) {
+                holder.textViewText.setVisibility(View.GONE);
+                holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.textViewText.setPaintFlags(holder.textViewText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
         } else {
             tasksUndoCompletedImageView.setVisibility(View.GONE);
             tasksCompletedImageView.setVisibility(View.VISIBLE);
-            tasksCompletedImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    completeItem(holder);
-                }
-            });
+            tasksCompletedImageView.setOnClickListener(v -> completeItem(holder));
+
+            if (holder.textViewTitle.getText().toString().equals(" "))
+                holder.textViewTitle.setVisibility(View.GONE);
+            else if (holder.textViewText.getText().toString().equals(" "))
+                holder.textViewText.setVisibility(View.GONE);
         }
+
+        undoSnackbar = Snackbar.make(((MainActivity) context).findViewById(R.id.fragmentContainer),
+                "Task Deleted!", Snackbar.LENGTH_SHORT);
+        undoSnackbar.setAnchorView(((MainActivity) context).findViewById(R.id.addTaskFAB));
+        undoSnackbar.setAction("Undo", v -> {
+            tasks.add(lastDeletedTaskPosition, lastDeletedTask);
+            notifyItemInserted(lastDeletedTaskPosition);
+            ((MainActivity) context).updateTasks(tasks);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    switch (((MainActivity) context).getCurrentState().toString()) {
+                        case "CURRENT_TASKS":
+                            ((MainActivity) context).switchToCurrentTasks();
+                            break;
+                        case "ARCHIVED_TASKS":
+                            ((MainActivity) context).switchToArchivedTasks();
+                            break;
+                        case "COMPLETED_TASKS":
+                            ((MainActivity) context).switchToCompletedTasks();
+                            break;
+                    }
+                }
+            }, 300);
+        });
     }
 
     @Override
@@ -92,16 +134,18 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     public void swipeToDeleteItem(int position) {
         if (position != RecyclerView.NO_POSITION) {
+            lastDeletedTask = tasks.get(position);
+            lastDeletedTaskPosition = position;
             tasks.remove(position);
-            ((MainActivity) context).deleteTask(tasks);
+            ((MainActivity) context).updateTasks(tasks);
             notifyItemRemoved(position);
-            Toast.makeText(context, "Task Deleted!", Toast.LENGTH_SHORT).show();
+            undoSnackbar.show();
         }
     }
 
     public void swipeToArchiveItem(int position) {
         if (position != RecyclerView.NO_POSITION) {
-            String archivedTask = tasks.get(position);
+            Task archivedTask = tasks.get(position);
             tasks.remove(position);
             ((MainActivity) context).addArchivedTask(tasks, archivedTask);
             notifyItemRemoved(position);
@@ -111,7 +155,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     public void swipeToUnarchiveItem(int position) {
         if (position != RecyclerView.NO_POSITION) {
-            String archivedTask = tasks.get(position);
+            Task archivedTask = tasks.get(position);
             tasks.remove(position);
             ((MainActivity) context).revertToCurrentTask(tasks, archivedTask);
             notifyItemRemoved(position);
@@ -120,22 +164,28 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     }
 
     private void completeItem(TasksViewHolder holder) {
-        if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-            String completedTask = tasks.get(holder.getAdapterPosition());
-            tasks.remove(holder.getAdapterPosition());
-            ((MainActivity) context).addCompletedTask(tasks, completedTask);
-            notifyItemRemoved(holder.getAdapterPosition());
-            Toast.makeText(context, "Task Completed!", Toast.LENGTH_SHORT).show();
+        int position = holder.getLayoutPosition();
+        if (position == RecyclerView.NO_POSITION) {
+            Toast.makeText(context, Integer.toString(position), Toast.LENGTH_SHORT).show();
         }
+        else {
+            Task completedTask = tasks.get(position);
+        tasks.remove(position);
+        ((MainActivity) context).addCompletedTask(tasks, completedTask);
+        notifyItemRemoved(position);
+        Toast.makeText(context, "Task Completed!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void undoCompleteItem(TasksViewHolder holder) {
-        if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-            String completedTask = tasks.get(holder.getAdapterPosition());
-            tasks.remove(holder.getAdapterPosition());
+        int position = holder.getLayoutPosition();
+        if (position != RecyclerView.NO_POSITION) {
+            Task completedTask = tasks.get(position);
+            tasks.remove(position);
             ((MainActivity) context).addCurrentTask(completedTask);
-            ((MainActivity) context).deleteTask(tasks);
-            notifyItemRemoved(holder.getAdapterPosition());
+            ((MainActivity) context).updateTasks(tasks);
+            notifyItemRemoved(position);
             Toast.makeText(context, "Task Completion Undone!", Toast.LENGTH_SHORT).show();
         }
     }

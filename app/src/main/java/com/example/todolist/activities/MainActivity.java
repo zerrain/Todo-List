@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.todolist.R;
+import com.example.todolist.Task;
 import com.example.todolist.fragments.ArchivedTasksFragment;
 import com.example.todolist.fragments.BottomNavigationDrawerFragment;
 import com.example.todolist.fragments.CompletedTasksFragment;
@@ -28,7 +31,9 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,16 +53,17 @@ public class MainActivity extends AppCompatActivity {
     MaterialToolbar mainToolbar;
 
     private NavMenuStates currentState = NavMenuStates.CURRENT_TASKS;
+    private String currentDate;
     private BottomNavigationDrawerFragment bottomNavigationDrawerFragment;
     private FragmentManager fragmentManager;
     private Fragment fragment;
 
     File currentTasksFile;
-    ArrayList<String> currentTasks;
+    ArrayList<Task> currentTasks;
     File completedTasksFile;
-    ArrayList<String> completedTasks;
+    ArrayList<Task> completedTasks;
     File archivedTasksFile;
-    ArrayList<String> archivedTasks;
+    ArrayList<Task> archivedTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +74,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        String datePattern = "dd/MM/yyyy";
+        currentDate = new SimpleDateFormat(datePattern).format(new Date());
         setSupportActionBar(bottomAppBar);
         mainToolbar.setTitle("Current Tasks");
         bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
+        currentTasks = new ArrayList<>();
+        completedTasks = new ArrayList<>();
+        archivedTasks = new ArrayList<>();
         currentTasksFile = new File(getFilesDir(), "currentTasks.txt");
         completedTasksFile = new File(getFilesDir(), "completedTasks.txt");
         archivedTasksFile = new File(getFilesDir(), "archivedTasks.txt");
@@ -87,34 +98,44 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.addTaskFAB)
     public void onViewClicked() {
-        final EditText newTaskEditText = new EditText(this);
+        LinearLayout linearLayout = new LinearLayout(getBaseContext());
+        final EditText taskTitleEditText = new EditText(this);
+        final EditText taskTextEditText = new EditText(this);
+
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        taskTitleEditText.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        taskTextEditText.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(taskTitleEditText);
+        linearLayout.addView(taskTextEditText);
 
         AlertDialog addTaskDialog = new AlertDialog.Builder(this).create();
         addTaskDialog.setTitle("New Task");
         addTaskDialog.setMessage("Input new task in box");
-        addTaskDialog.setView(newTaskEditText);
+        addTaskDialog.setView(linearLayout);
         addTaskDialog.getWindow().setBackgroundDrawableResource(R.drawable.help_dialog_bg);
 
         addTaskDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (newTaskEditText.getText().toString().isEmpty())
-                            Toast.makeText(MainActivity.this, "No Task Entered!", Toast.LENGTH_SHORT).show();
-                        else {
-                            addCurrentTask(newTaskEditText.getText().toString());
-                            Toast.makeText(getBaseContext(), "Task Added", Toast.LENGTH_SHORT).show();
-                        }
+                (dialog, which) -> {
+                    if (taskTitleEditText.getText().toString().isEmpty() && taskTextEditText.getText().toString().isEmpty())
+                        Toast.makeText(MainActivity.this, "No Task Entered!", Toast.LENGTH_SHORT).show();
+                    else {
+                        String taskTitle = taskTitleEditText.getText().toString();
+                        String taskText = taskTextEditText.getText().toString();
+                        if (taskTitle.isEmpty())
+                            taskTitle = " ";
+                        if (taskText.isEmpty())
+                            taskText = " ";
+
+                        Task task = new Task("Added: " + currentDate,
+                                "Last Edited: " + currentDate,
+                                taskTitle, taskText);
+                        addCurrentTask(task);
+                        Toast.makeText(getBaseContext(), task.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
         addTaskDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
 
         addTaskDialog.show();
         addTaskDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
@@ -129,12 +150,12 @@ public class MainActivity extends AppCompatActivity {
         addTaskFAB.show();
     }
 
-    public void addCurrentTask(String newCurrentTask) {
+    public void addCurrentTask(Task newCurrentTask) {
         currentTasks.add(newCurrentTask);
         saveCurrentTasks(currentTasks);
     }
 
-    public void deleteTask(ArrayList<String> tasks) {
+    public void updateTasks(ArrayList<Task> tasks) {
         if (currentState == NavMenuStates.CURRENT_TASKS)
             saveCurrentTasks(tasks);
         else if (currentState == NavMenuStates.COMPLETED_TASKS)
@@ -143,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             saveArchivedTasks(tasks);
     }
 
-    public void revertToCurrentTask(ArrayList<String> tasks, String newCurrentTask) {
+    public void revertToCurrentTask(ArrayList<Task> tasks, Task newCurrentTask) {
         if (currentState == NavMenuStates.COMPLETED_TASKS)
             saveCompletedTasks(tasks);
         else if (currentState == NavMenuStates.ARCHIVED_TASKS)
@@ -152,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         saveCurrentTasks(currentTasks);
     }
 
-    public void addCompletedTask(ArrayList<String> tasks, String completedTask) {
+    public void addCompletedTask(ArrayList<Task> tasks, Task completedTask) {
         if (currentState == NavMenuStates.CURRENT_TASKS)
             saveCurrentTasks(tasks);
         else if (currentState == NavMenuStates.ARCHIVED_TASKS)
@@ -161,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         saveCompletedTasks(completedTasks);
     }
 
-    public void addArchivedTask(ArrayList<String> tasks, String archivedTask) {
+    public void addArchivedTask(ArrayList<Task> tasks, Task archivedTask) {
         if (currentState == NavMenuStates.CURRENT_TASKS)
             saveCurrentTasks(tasks);
         else if (currentState == NavMenuStates.COMPLETED_TASKS)
@@ -179,33 +200,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void switchToCurrentTasks() {
-        if (currentState != NavMenuStates.CURRENT_TASKS) {
             currentState = NavMenuStates.CURRENT_TASKS;
             loadCurrentTasks();
             fragment = new CurrentTasksFragment(currentTasks);
             replaceFragment(fragment);
             mainToolbar.setTitle("Current Tasks");
-        }
+            showFAB();
     }
 
     public void switchToCompletedTasks() {
-        if (currentState != NavMenuStates.COMPLETED_TASKS) {
             currentState = NavMenuStates.COMPLETED_TASKS;
             loadCompletedTasks();
             fragment = new CompletedTasksFragment(completedTasks);
             replaceFragment(fragment);
             mainToolbar.setTitle("Completed Tasks");
-        }
+            showFAB();
     }
 
     public void switchToArchivedTasks() {
-        if (currentState != NavMenuStates.ARCHIVED_TASKS) {
             currentState = NavMenuStates.ARCHIVED_TASKS;
             loadArchivedTasks();
             fragment = new ArchivedTasksFragment(archivedTasks);
             replaceFragment(fragment);
             mainToolbar.setTitle("Archived Tasks");
-        }
+            showFAB();
     }
 
     public void showSettingsFragment() {
@@ -218,19 +236,14 @@ public class MainActivity extends AppCompatActivity {
         helpDialog.setMessage("Swipe right to archive, left to delete");
         helpDialog.getWindow().setBackgroundDrawableResource(R.drawable.help_dialog_bg);
         helpDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
 
         helpDialog.show();
         helpDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
         helpDialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(Color.WHITE);
     }
 
-    public void saveCurrentTasks(ArrayList<String> newCurrentTasks) {
+    public void saveCurrentTasks(ArrayList<Task> newCurrentTasks) {
         try {
             FileUtils.writeLines(currentTasksFile, newCurrentTasks);
             currentTasks = newCurrentTasks;
@@ -241,7 +254,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadCurrentTasks() {
         try {
-            currentTasks = new ArrayList<>(FileUtils.readLines(currentTasksFile));
+            currentTasks = new ArrayList<>();
+            for (String line : FileUtils.readLines(currentTasksFile)) {
+                String[] parts = line.split("`");
+                currentTasks.add(new Task(parts[0], parts[1], parts[2], parts[3]));
+            }
+            //currentTasks = new ArrayList<>(FileUtils.readLines(currentTasksFile));
         } catch (IOException e) {
             e.printStackTrace();
             currentTasks = new ArrayList<>();
@@ -253,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void saveCompletedTasks(ArrayList<String> newCompletedTasks) {
+    public void saveCompletedTasks(ArrayList<Task> newCompletedTasks) {
         try {
             FileUtils.writeLines(completedTasksFile, newCompletedTasks);
             completedTasks = newCompletedTasks;
@@ -264,7 +282,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadCompletedTasks() {
         try {
-            completedTasks = new ArrayList<>(FileUtils.readLines(completedTasksFile));
+            completedTasks = new ArrayList<>();
+            for (String line : FileUtils.readLines(completedTasksFile)) {
+                String[] parts = line.split("`");
+                completedTasks.add(new Task(parts[0], parts[1], parts[2], parts[3]));
+            }
+            //completedTasks = new ArrayList<>(FileUtils.readLines(completedTasksFile));
         } catch (IOException e) {
             e.printStackTrace();
             completedTasks = new ArrayList<>();
@@ -276,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void saveArchivedTasks(ArrayList<String> newArchivedTasks) {
+    public void saveArchivedTasks(ArrayList<Task> newArchivedTasks) {
         try {
             FileUtils.writeLines(archivedTasksFile, newArchivedTasks);
             archivedTasks = newArchivedTasks;
@@ -287,7 +310,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadArchivedTasks() {
         try {
-            archivedTasks = new ArrayList<>(FileUtils.readLines(archivedTasksFile));
+            archivedTasks = new ArrayList<>();
+            for (String line : FileUtils.readLines(archivedTasksFile)) {
+                String[] parts = line.split("`");
+                archivedTasks.add(new Task(parts[0], parts[1], parts[2], parts[3]));
+            }
+            //archivedTasks = new ArrayList<>(FileUtils.readLines(archivedTasksFile));
         } catch (Exception e) {
             e.printStackTrace();
             archivedTasks = new ArrayList<>();

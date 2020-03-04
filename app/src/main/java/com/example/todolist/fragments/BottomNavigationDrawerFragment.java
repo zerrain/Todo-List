@@ -1,18 +1,13 @@
 package com.example.todolist.fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import com.example.todolist.R;
 import com.example.todolist.activities.MainActivity;
@@ -48,34 +43,31 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
         NavigationView bottomNavView = view.findViewById(R.id.bottomNavView);
         bottomNavView.getMenu().getItem(0).setChecked(true);
 
-        bottomNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(true);
+        bottomNavView.setNavigationItemSelectedListener(item -> {
+            item.setChecked(true);
 
-                switch (item.getItemId()) {
-                    case R.id.tasksCurrentNavItem:
-                        ((MainActivity)getActivity()).switchToCurrentTasks();
-                        break;
-                    case R.id.tasksCompletedNavItem:
-                        ((MainActivity)getActivity()).switchToCompletedTasks();
-                        break;
-                    case R.id.tasksArchivedNavItem:
-                        ((MainActivity)getActivity()).switchToArchivedTasks();
-                        break;
-                    case R.id.settingsNavItem:
-                        ((MainActivity)getActivity()).showSettingsFragment();
-                        break;
-                    case R.id.helpNavItem:
-                        ((MainActivity)getActivity()).showHelpDialog();
-                        break;
-                    case R.id.exitNavItem:
-                        getActivity().finish();
-                        break;
-                }
-                ((MainActivity) getContext()).hideFragment();
-                return true;
+            switch (item.getItemId()) {
+                case R.id.tasksCurrentNavItem:
+                    ((MainActivity)getActivity()).switchToCurrentTasks();
+                    break;
+                case R.id.tasksCompletedNavItem:
+                    ((MainActivity)getActivity()).switchToCompletedTasks();
+                    break;
+                case R.id.tasksArchivedNavItem:
+                    ((MainActivity)getActivity()).switchToArchivedTasks();
+                    break;
+                case R.id.settingsNavItem:
+                    ((MainActivity)getActivity()).showSettingsFragment();
+                    break;
+                case R.id.helpNavItem:
+                    ((MainActivity)getActivity()).showHelpDialog();
+                    break;
+                case R.id.exitNavItem:
+                    getActivity().finish();
+                    break;
             }
+            ((MainActivity) getContext()).hideFragment();
+            return true;
         });
     }
 }

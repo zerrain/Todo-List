@@ -13,12 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.R;
 import com.example.todolist.SwipeToDeleteArchiveCallback;
+import com.example.todolist.Task;
 import com.example.todolist.TasksAdapter;
 import com.example.todolist.activities.MainActivity;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -28,13 +26,13 @@ public class ArchivedTasksFragment extends Fragment {
 
     @BindView(R.id.archivedTasksRecyclerView)
     RecyclerView archivedTasksRecyclerView;
-    private ArrayList<String> archivedTasks;
+    private ArrayList<Task> archivedTasks;
 
     public ArchivedTasksFragment() {
         // Required empty public constructor
     }
 
-    public ArchivedTasksFragment(ArrayList<String> archivedTasks) {
+    public ArchivedTasksFragment(ArrayList<Task> archivedTasks) {
         this.archivedTasks = archivedTasks;
     }
 
