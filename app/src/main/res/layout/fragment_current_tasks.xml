@@ -5,6 +5,26 @@
     android:layout_height="match_parent"
     tools:context=".fragments.CurrentTasksFragment">
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/noTasksAddedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:layout_marginHorizontal="30dp"
+        android:text="@string/noTasksAddedString"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/allTasksCompletedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:layout_marginHorizontal="30dp"
+        android:text="@string/allTasksCompletedString"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/currentTasksRecyclerView"
         android:layout_width="match_parent"

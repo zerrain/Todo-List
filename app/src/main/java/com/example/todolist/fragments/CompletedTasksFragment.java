@@ -16,6 +16,7 @@ import com.example.todolist.SwipeToDeleteArchiveCallback;
 import com.example.todolist.Task;
 import com.example.todolist.TasksAdapter;
 import com.example.todolist.activities.MainActivity;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,8 @@ public class CompletedTasksFragment extends Fragment {
 
     @BindView(R.id.completedTasksRecyclerView)
     RecyclerView completedTasksRecyclerView;
+    @BindView(R.id.noTasksCompletedTextView)
+    MaterialTextView noTasksCompletedTextView;
     private ArrayList<Task> completedTasks;
 
     public CompletedTasksFragment() {
@@ -46,15 +49,26 @@ public class CompletedTasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_completed_tasks, container, false);
         ButterKnife.bind(this, view);
-        initView(view);
+        initViews();
+        initRecyclerView();
         return view;
     }
 
-    private void initView(View view) {
+    public void initViews() {
+        if (completedTasks.isEmpty()) {
+            completedTasksRecyclerView.setVisibility(View.GONE);
+            noTasksCompletedTextView.setVisibility(View.VISIBLE);
+        } else {
+            completedTasksRecyclerView.setVisibility(View.VISIBLE);
+            noTasksCompletedTextView.setVisibility(View.GONE);
+        }
+    }
+
+    public void initRecyclerView() {
         completedTasksRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         completedTasksRecyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter completedTasksAdapter = new TasksAdapter(completedTasks, getContext());
+        RecyclerView.Adapter completedTasksAdapter = new TasksAdapter(completedTasks, getContext(), CompletedTasksFragment.this);
         completedTasksRecyclerView.setAdapter(completedTasksAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteArchiveCallback((TasksAdapter) completedTasksAdapter, "completed"));
         itemTouchHelper.attachToRecyclerView(completedTasksRecyclerView);
@@ -70,5 +84,9 @@ public class CompletedTasksFragment extends Fragment {
                     ((MainActivity) getActivity()).showFAB();
             }
         });
+    }
+
+    public RecyclerView getRecyclerView() {
+        return completedTasksRecyclerView;
     }
 }

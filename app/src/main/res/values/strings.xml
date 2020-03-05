@@ -17,4 +17,8 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="noTasksAddedString">Press the \'+\' button to add a new task!\n\nSwipe any task cards to the right or left to\narchive or delete them</string>
+    <string name="allTasksCompletedString">All current tasks have been completed!</string>
+    <string name="noTasksCompletedString">No tasks are currently marked as completed!\n\nCompleting a task will populate this list</string>
+    <string name="noTasksArchivedString">No tasks are currently marked as archived!\n\nSwiping a task card to the right \nwill populate this list</string>
 </resources>

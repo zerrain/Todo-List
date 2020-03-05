@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ArchivedTasksFragment">
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/noTasksArchivedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:layout_marginHorizontal="30dp"
+        android:text="@string/noTasksArchivedString"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/archivedTasksRecyclerView"
         android:layout_width="match_parent"

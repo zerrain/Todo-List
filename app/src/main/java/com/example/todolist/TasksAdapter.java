@@ -3,6 +3,7 @@ package com.example.todolist;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.todolist.activities.MainActivity;
+import com.example.todolist.fragments.ArchivedTasksFragment;
+import com.example.todolist.fragments.CompletedTasksFragment;
+import com.example.todolist.fragments.CurrentTasksFragment;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -25,8 +31,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
     private ArrayList<Task> tasks;
     private Context context;
     private Snackbar undoSnackbar;
-    public Task lastDeletedTask;
-    public int lastDeletedTaskPosition;
+    private Fragment fragment;
+    private Task lastDeletedTask;
+    private int lastDeletedTaskPosition;
 
     public static class TasksViewHolder extends RecyclerView.ViewHolder {
         public CardView cardView;
@@ -45,10 +52,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         }
     }
 
-    public TasksAdapter(ArrayList<Task> tasks, Context context) {
+    public TasksAdapter(ArrayList<Task> tasks, Context context, Fragment fragment) {
         this.tasks = new ArrayList<>();
         this.tasks = tasks;
         this.context = context;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -64,10 +72,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     @Override
     public void onBindViewHolder(final TasksViewHolder holder, final int position) {
-        initHolderViews(holder);
-    }
-
-    private void initHolderViews(TasksViewHolder holder) {
         int taskPosition = holder.getLayoutPosition();
         holder.textViewTitle.setText(tasks.get(taskPosition).getTaskTitle());
         holder.textViewText.setText(tasks.get(taskPosition).getTaskText());
@@ -110,8 +114,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         undoSnackbar.setAnchorView(((MainActivity) context).findViewById(R.id.addTaskFAB));
         undoSnackbar.setAction("Undo", v -> {
             tasks.add(lastDeletedTaskPosition, lastDeletedTask);
-            notifyItemInserted(lastDeletedTaskPosition);
             ((MainActivity) context).updateTasks(tasks);
+            notifyItemInserted(lastDeletedTaskPosition);
             redrawFragment();
         });
     }
@@ -128,6 +132,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             tasks.remove(position);
             ((MainActivity) context).updateTasks(tasks);
             notifyItemRemoved(position);
+            redrawFragmentViews();
             undoSnackbar.show();
         }
     }
@@ -139,6 +144,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             ((MainActivity) context).addArchivedTask(tasks, archivedTask);
             notifyItemRemoved(position);
             Toast.makeText(context, "Task Archived!", Toast.LENGTH_SHORT).show();
+            redrawFragmentViews();
         }
     }
 
@@ -149,18 +155,18 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             ((MainActivity) context).revertToCurrentTask(tasks, archivedTask);
             notifyItemRemoved(position);
             Toast.makeText(context, "Task Unarchived!", Toast.LENGTH_SHORT).show();
+            redrawFragmentViews();
         }
     }
 
     private void completeItem(TasksViewHolder holder) {
         int position = holder.getLayoutPosition();
-        if (position == RecyclerView.NO_POSITION)
-            Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
         Task completedTask = tasks.get(position);
         tasks.remove(position);
         ((MainActivity) context).addCompletedTask(tasks, completedTask);
         notifyItemRemoved(position);
         Toast.makeText(context, "Task Completed!", Toast.LENGTH_SHORT).show();
+        redrawFragmentViews();
     }
 
     private void undoCompleteItem(TasksViewHolder holder) {
@@ -173,6 +179,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         ((MainActivity) context).updateTasks(tasks);
         notifyItemRemoved(position);
         Toast.makeText(context, "Task Completion Undone!", Toast.LENGTH_SHORT).show();
+        redrawFragmentViews();
 
     }
 
@@ -184,7 +191,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                switch (((MainActivity) context).getCurrentState().toString()) {
+                switch (((MainActivity) context).getCurrentState()) {
                     case "CURRENT_TASKS":
                         ((MainActivity) context).switchToCurrentTasks();
                         break;
@@ -197,5 +204,32 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
                 }
             }
         }, 300);
+    }
+
+    private void redrawFragmentViews() {
+        if (tasks.isEmpty())
+            switch (((MainActivity) context).getCurrentState()) {
+                case "CURRENT_TASKS":
+                    ((CurrentTasksFragment) fragment).initViews();
+                    break;
+                case "ARCHIVED_TASKS":
+                    ((ArchivedTasksFragment) fragment).initViews();
+                    break;
+                case "COMPLETED_TASKS":
+                    ((CompletedTasksFragment) fragment).initViews();
+                    break;
+            }
+    }
+
+    private RecyclerView getFragmentRecyclerView() {
+        switch (((MainActivity) context).getCurrentState()) {
+            case "CURRENT_TASKS":
+                return ((CurrentTasksFragment) fragment).getRecyclerView();
+            case "ARCHIVED_TASKS":
+                return ((ArchivedTasksFragment) fragment).getRecyclerView();
+            case "COMPLETED_TASKS":
+                return ((CompletedTasksFragment) fragment).getRecyclerView();
+        }
+        return null;
     }
 }

@@ -16,6 +16,7 @@ import com.example.todolist.SwipeToDeleteArchiveCallback;
 import com.example.todolist.Task;
 import com.example.todolist.TasksAdapter;
 import com.example.todolist.activities.MainActivity;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,8 @@ public class ArchivedTasksFragment extends Fragment {
 
     @BindView(R.id.archivedTasksRecyclerView)
     RecyclerView archivedTasksRecyclerView;
+    @BindView(R.id.noTasksArchivedTextView)
+    MaterialTextView noTasksArchivedTextView;
     private ArrayList<Task> archivedTasks;
 
     public ArchivedTasksFragment() {
@@ -46,15 +49,26 @@ public class ArchivedTasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_archived_tasks, container, false);
         ButterKnife.bind(this, view);
-        initView(view);
+        initViews();
+        initRecyclerView();
         return view;
     }
 
-    private void initView(View view) {
+    public void initViews() {
+        if (archivedTasks.isEmpty()) {
+            archivedTasksRecyclerView.setVisibility(View.GONE);
+            noTasksArchivedTextView.setVisibility(View.VISIBLE);
+        } else {
+            archivedTasksRecyclerView.setVisibility(View.VISIBLE);
+            noTasksArchivedTextView.setVisibility(View.GONE);
+        }
+    }
+
+    public void initRecyclerView() {
         archivedTasksRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         archivedTasksRecyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter archivedTasksAdapter = new TasksAdapter(archivedTasks, getContext());
+        RecyclerView.Adapter archivedTasksAdapter = new TasksAdapter(archivedTasks, getContext(), ArchivedTasksFragment.this);
         archivedTasksRecyclerView.setAdapter(archivedTasksAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteArchiveCallback((TasksAdapter) archivedTasksAdapter, "archived"));
         itemTouchHelper.attachToRecyclerView(archivedTasksRecyclerView);
@@ -70,5 +84,9 @@ public class ArchivedTasksFragment extends Fragment {
                     ((MainActivity) getActivity()).showFAB();
             }
         });
+    }
+
+    public RecyclerView getRecyclerView() {
+        return archivedTasksRecyclerView;
     }
 }

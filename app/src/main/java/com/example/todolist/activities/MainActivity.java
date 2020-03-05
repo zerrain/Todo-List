@@ -63,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private Fragment fragment;
 
-    File currentTasksFile;
-    ArrayList<Task> currentTasks;
-    File completedTasksFile;
-    ArrayList<Task> completedTasks;
-    File archivedTasksFile;
-    ArrayList<Task> archivedTasks;
+    private File currentTasksFile;
+    private ArrayList<Task> currentTasks;
+    private File completedTasksFile;
+    private ArrayList<Task> completedTasks;
+    private File archivedTasksFile;
+    private ArrayList<Task> archivedTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
         addTaskDialog.show();
         addTaskDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
         addTaskDialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(Color.WHITE);
+    }
+
+    public ArrayList<Task> getCompletedTasks() {
+        return completedTasks;
     }
 
     public void hideFAB() {

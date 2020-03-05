@@ -16,6 +16,7 @@ import com.example.todolist.SwipeToDeleteArchiveCallback;
 import com.example.todolist.Task;
 import com.example.todolist.TasksAdapter;
 import com.example.todolist.activities.MainActivity;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,10 @@ public class CurrentTasksFragment extends Fragment {
 
     @BindView(R.id.currentTasksRecyclerView)
     RecyclerView currentTasksRecyclerView;
+    @BindView(R.id.noTasksAddedTextView)
+    MaterialTextView noTasksAddedTextView;
+    @BindView(R.id.allTasksCompletedTextView)
+    MaterialTextView allTasksCompletedTextView;
     private ArrayList<Task> currentTasks;
 
     public CurrentTasksFragment() {
@@ -46,15 +51,33 @@ public class CurrentTasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_current_tasks, container, false);
         ButterKnife.bind(this, view);
-        initView(view);
+        initViews();
+        initRecyclerView();
         return view;
     }
 
-    private void initView(View view) {
+    public void initViews() {
+        if (currentTasks.isEmpty()) {
+            currentTasksRecyclerView.setVisibility(View.GONE);
+            if (((MainActivity) getContext()).getCompletedTasks().isEmpty()) {
+                allTasksCompletedTextView.setVisibility(View.GONE);
+                noTasksAddedTextView.setVisibility(View.VISIBLE);
+            } else {
+                allTasksCompletedTextView.setVisibility(View.VISIBLE);
+                noTasksAddedTextView.setVisibility(View.GONE);
+            }
+        } else {
+            currentTasksRecyclerView.setVisibility(View.VISIBLE);
+            noTasksAddedTextView.setVisibility(View.GONE);
+            allTasksCompletedTextView.setVisibility(View.GONE);
+        }
+    }
+
+    public void initRecyclerView() {
         currentTasksRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         currentTasksRecyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter currentTasksAdapter = new TasksAdapter(currentTasks, getContext());
+        RecyclerView.Adapter currentTasksAdapter = new TasksAdapter(currentTasks, getContext(), CurrentTasksFragment.this);
         currentTasksRecyclerView.setAdapter(currentTasksAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteArchiveCallback((TasksAdapter) currentTasksAdapter, "current"));
         itemTouchHelper.attachToRecyclerView(currentTasksRecyclerView);
@@ -70,5 +93,9 @@ public class CurrentTasksFragment extends Fragment {
                     ((MainActivity) getActivity()).showFAB();
             }
         });
+    }
+
+    public RecyclerView getRecyclerView() {
+        return currentTasksRecyclerView;
     }
 }
