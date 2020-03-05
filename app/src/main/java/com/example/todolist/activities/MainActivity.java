@@ -30,7 +30,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
         currentTasks = new ArrayList<>();
         completedTasks = new ArrayList<>();
         archivedTasks = new ArrayList<>();
-        currentTasksFile = new File(getFilesDir(), "currentTasks.txt");
-        completedTasksFile = new File(getFilesDir(), "completedTasks.txt");
-        archivedTasksFile = new File(getFilesDir(), "archivedTasks.txt");
+        currentTasksFile = new File(getFilesDir(), "currentTasks");
+        completedTasksFile = new File(getFilesDir(), "completedTasks");
+        archivedTasksFile = new File(getFilesDir(), "archivedTasks");
         loadCurrentTasks();
         loadCompletedTasks();
         loadArchivedTasks();
@@ -130,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
                                 "Last Edited: " + currentDate,
                                 taskTitle, taskText);
                         addCurrentTask(task);
+                        if (currentState.toString().equals("CURRENT_TASKS"))
+                            switchToCurrentTasks();
                         Toast.makeText(getBaseContext(), task.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -245,27 +252,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveCurrentTasks(ArrayList<Task> newCurrentTasks) {
         try {
-            FileUtils.writeLines(currentTasksFile, newCurrentTasks);
+            FileOutputStream fos = new FileOutputStream(currentTasksFile);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(newCurrentTasks);
+            oos.close();
             currentTasks = newCurrentTasks;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void loadCurrentTasks() {
         try {
-            currentTasks = new ArrayList<>();
-            for (String line : FileUtils.readLines(currentTasksFile)) {
-                String[] parts = line.split("`");
-                currentTasks.add(new Task(parts[0], parts[1], parts[2], parts[3]));
-            }
-            //currentTasks = new ArrayList<>(FileUtils.readLines(currentTasksFile));
-        } catch (IOException e) {
+            FileInputStream fis = new FileInputStream(currentTasksFile);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            currentTasks = (ArrayList<Task>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             currentTasks = new ArrayList<>();
             try {
                 currentTasksFile.createNewFile();
-            } catch (IOException ex) {
+                System.out.println("Current task file created");
+            } catch (Exception ex){
                 ex.printStackTrace();
             }
         }
@@ -273,27 +281,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveCompletedTasks(ArrayList<Task> newCompletedTasks) {
         try {
-            FileUtils.writeLines(completedTasksFile, newCompletedTasks);
+            FileOutputStream fos = new FileOutputStream(completedTasksFile);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(newCompletedTasks);
+            oos.close();
             completedTasks = newCompletedTasks;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void loadCompletedTasks() {
         try {
-            completedTasks = new ArrayList<>();
-            for (String line : FileUtils.readLines(completedTasksFile)) {
-                String[] parts = line.split("`");
-                completedTasks.add(new Task(parts[0], parts[1], parts[2], parts[3]));
-            }
-            //completedTasks = new ArrayList<>(FileUtils.readLines(completedTasksFile));
-        } catch (IOException e) {
+            FileInputStream fis = new FileInputStream(completedTasksFile);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            completedTasks = (ArrayList<Task>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             completedTasks = new ArrayList<>();
             try {
                 completedTasksFile.createNewFile();
-            } catch (IOException ex) {
+                System.out.println("Completed task file created");
+            } catch (Exception ex){
                 ex.printStackTrace();
             }
         }
@@ -301,27 +310,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void saveArchivedTasks(ArrayList<Task> newArchivedTasks) {
         try {
-            FileUtils.writeLines(archivedTasksFile, newArchivedTasks);
+            FileOutputStream fos = new FileOutputStream(archivedTasksFile);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(newArchivedTasks);
+            oos.close();
             archivedTasks = newArchivedTasks;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void loadArchivedTasks() {
         try {
-            archivedTasks = new ArrayList<>();
-            for (String line : FileUtils.readLines(archivedTasksFile)) {
-                String[] parts = line.split("`");
-                archivedTasks.add(new Task(parts[0], parts[1], parts[2], parts[3]));
-            }
-            //archivedTasks = new ArrayList<>(FileUtils.readLines(archivedTasksFile));
-        } catch (Exception e) {
+            FileInputStream fis = new FileInputStream(archivedTasksFile);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            archivedTasks = (ArrayList<Task>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             archivedTasks = new ArrayList<>();
             try {
                 archivedTasksFile.createNewFile();
-            } catch (IOException ex) {
+                System.out.println("Archived task file created");
+            } catch (Exception ex){
                 ex.printStackTrace();
             }
         }

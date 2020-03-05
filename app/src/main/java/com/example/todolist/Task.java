@@ -1,6 +1,8 @@
 package com.example.todolist;
 
-public class Task {
+import java.io.Serializable;
+
+public class Task implements Serializable {
     private String dateAdded;
     private String dateLastEdited;
     private String taskTitle;

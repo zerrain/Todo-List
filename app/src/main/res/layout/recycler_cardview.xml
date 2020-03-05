@@ -4,11 +4,11 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
     android:layout_marginTop="15dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="#CCCCCC"
     app:cardBackgroundColor="@color/colorCardViewBG"
     app:cardCornerRadius="15dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    app:strokeColor="#CCCCCC"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,62 +28,67 @@
                 android:id="@+id/tasksTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="19sp"
+                android:imeOptions="actionNext"/>
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tasksTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="3"
                 android:textColor="@color/colorTasksText"
                 android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="8"
+                android:layout_marginTop="4dp"
                 android:orientation="horizontal"
-                android:layout_marginTop="4dp">
+                android:weightSum="8">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tasksDateAddedTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:layout_weight="5"
                     android:textColor="@color/colorTasksDates"
-                    android:textSize="10sp"
-                    android:layout_weight="5"/>
+                    android:textSize="10sp" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tasksDateEditedTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
+                    android:layout_weight="3"
                     android:textColor="@color/colorTasksDates"
-                    android:textSize="10sp"
-                    android:layout_weight="3"/>
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/tasksCompletedImageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/ic_baseline_check_24" />
+            <ImageView
+                android:id="@+id/tasksCompletedImageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/ic_baseline_check_24" />
 
-        <ImageView
-            android:id="@+id/tasksUndoCompletedImageView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/ic_baseline_undo_24"
-            android:visibility="gone" />
+            <ImageView
+                android:id="@+id/tasksUndoCompletedImageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src="@drawable/ic_baseline_undo_24"
+                android:visibility="gone" />
 
     </LinearLayout>
 
