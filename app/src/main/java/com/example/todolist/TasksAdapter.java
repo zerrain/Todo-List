@@ -81,11 +81,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
             if (holder.textViewTitle.getText().toString().equals(" ")) {
                 holder.textViewTitle.setVisibility(View.GONE);
+                holder.textViewText.setVisibility(View.VISIBLE);
                 holder.textViewText.setPaintFlags(holder.textViewText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             } else if (holder.textViewText.getText().toString().equals(" ")) {
-                holder.textViewText.setVisibility(View.GONE);
                 holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             } else {
+                holder.textViewTitle.setVisibility(View.VISIBLE);
+                holder.textViewText.setVisibility(View.VISIBLE);
                 holder.textViewTitle.setPaintFlags(holder.textViewTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.textViewText.setPaintFlags(holder.textViewText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
@@ -94,10 +96,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             tasksCompletedImageView.setVisibility(View.VISIBLE);
             tasksCompletedImageView.setOnClickListener(v -> completeItem(holder));
 
-            if (holder.textViewTitle.getText().toString().equals(" "))
+            if (holder.textViewTitle.getText().toString().equals(" ")) {
                 holder.textViewTitle.setVisibility(View.GONE);
-            else if (holder.textViewText.getText().toString().equals(" "))
-                holder.textViewText.setVisibility(View.GONE);
+                holder.textViewText.setVisibility(View.VISIBLE);
+            } else {
+                holder.textViewText.setVisibility(View.VISIBLE);
+                holder.textViewTitle.setVisibility(View.VISIBLE);
+            }
         }
 
         undoSnackbar = Snackbar.make(((MainActivity) context).findViewById(R.id.fragmentContainer),
@@ -107,23 +112,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
             tasks.add(lastDeletedTaskPosition, lastDeletedTask);
             notifyItemInserted(lastDeletedTaskPosition);
             ((MainActivity) context).updateTasks(tasks);
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    switch (((MainActivity) context).getCurrentState().toString()) {
-                        case "CURRENT_TASKS":
-                            ((MainActivity) context).switchToCurrentTasks();
-                            break;
-                        case "ARCHIVED_TASKS":
-                            ((MainActivity) context).switchToArchivedTasks();
-                            break;
-                        case "COMPLETED_TASKS":
-                            ((MainActivity) context).switchToCompletedTasks();
-                            break;
-                    }
-                }
-            }, 300);
+            redrawFragment();
         });
     }
 
@@ -165,32 +154,48 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TasksViewHol
 
     private void completeItem(TasksViewHolder holder) {
         int position = holder.getLayoutPosition();
-        if (position == RecyclerView.NO_POSITION) {
-            Toast.makeText(context, Integer.toString(position), Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Task completedTask = tasks.get(position);
+        if (position == RecyclerView.NO_POSITION)
+            Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
+        Task completedTask = tasks.get(position);
         tasks.remove(position);
         ((MainActivity) context).addCompletedTask(tasks, completedTask);
         notifyItemRemoved(position);
         Toast.makeText(context, "Task Completed!", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     private void undoCompleteItem(TasksViewHolder holder) {
         int position = holder.getLayoutPosition();
-        if (position != RecyclerView.NO_POSITION) {
-            Task completedTask = tasks.get(position);
-            tasks.remove(position);
-            ((MainActivity) context).addCurrentTask(completedTask);
-            ((MainActivity) context).updateTasks(tasks);
-            notifyItemRemoved(position);
-            Toast.makeText(context, "Task Completion Undone!", Toast.LENGTH_SHORT).show();
-        }
+        if (position == RecyclerView.NO_POSITION)
+            Toast.makeText(context, position, Toast.LENGTH_SHORT).show();
+        Task completedTask = tasks.get(position);
+        tasks.remove(position);
+        ((MainActivity) context).addCurrentTask(completedTask);
+        ((MainActivity) context).updateTasks(tasks);
+        notifyItemRemoved(position);
+        Toast.makeText(context, "Task Completion Undone!", Toast.LENGTH_SHORT).show();
+
     }
 
     public Context getContext() {
         return context;
+    }
+
+    private void redrawFragment() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (((MainActivity) context).getCurrentState().toString()) {
+                    case "CURRENT_TASKS":
+                        ((MainActivity) context).switchToCurrentTasks();
+                        break;
+                    case "ARCHIVED_TASKS":
+                        ((MainActivity) context).switchToArchivedTasks();
+                        break;
+                    case "COMPLETED_TASKS":
+                        ((MainActivity) context).switchToCompletedTasks();
+                        break;
+                }
+            }
+        }, 300);
     }
 }

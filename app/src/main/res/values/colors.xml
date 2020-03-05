@@ -6,6 +6,12 @@
     <color name="colorCheckedNavItem">#E9E9E9</color>
     <color name="colorDividerColor">#333333</color>
     <color name="colorCardViewBG">#FAFAFA</color>
-    <color name="colorTasksText">#555555</color>
-    <color name="colorTasksDatesText">#999999</color>
+    <color name="colorTasksText">#333333</color>
+    <color name="colorArchiveSwipeBG">#7dff7d</color>
+    <color name="colorDeleteSwipeBG">#ff7d7d</color>
+    <color name="colorDeleteArchiveSwipeIcon">#666666</color>
+    <color name="colorAddFABIcon">#2A2A2A</color>
+    <color name="colorCheckUndoTaskIcon">#2A2A2A</color>
+    <color name="colorMenuIcon">#2A2A2A</color>
+    <color name="colorTasksDates">#555555</color>
 </resources>
