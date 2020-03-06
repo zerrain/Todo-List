@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.todolist.R;
 import com.example.todolist.Task;
+import com.example.todolist.fragments.AddTaskBottomSheetFragment;
 import com.example.todolist.fragments.ArchivedTasksFragment;
 import com.example.todolist.fragments.BottomNavigationDrawerFragment;
 import com.example.todolist.fragments.CompletedTasksFragment;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private NavMenuStates currentState = NavMenuStates.CURRENT_TASKS;
     private String currentDate;
     private BottomNavigationDrawerFragment bottomNavigationDrawerFragment;
+    private AddTaskBottomSheetFragment addTaskBottomSheetFragment;
     private FragmentManager fragmentManager;
     private Fragment fragment;
 
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(bottomAppBar);
         mainToolbar.setTitle("Current Tasks");
         bottomNavigationDrawerFragment = new BottomNavigationDrawerFragment();
+        addTaskBottomSheetFragment = new AddTaskBottomSheetFragment();
         currentTasks = new ArrayList<>();
         completedTasks = new ArrayList<>();
         archivedTasks = new ArrayList<>();
@@ -103,50 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.addTaskFAB)
     public void onViewClicked() {
-        LinearLayout linearLayout = new LinearLayout(getBaseContext());
-        final EditText taskTitleEditText = new EditText(this);
-        final EditText taskTextEditText = new EditText(this);
-
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        taskTitleEditText.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-        taskTextEditText.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-        linearLayout.addView(taskTitleEditText);
-        linearLayout.addView(taskTextEditText);
-
-        AlertDialog addTaskDialog = new AlertDialog.Builder(this).create();
-        addTaskDialog.setTitle("New Task");
-        addTaskDialog.setMessage("Input new task in box");
-        addTaskDialog.setView(linearLayout);
-        addTaskDialog.getWindow().setBackgroundDrawableResource(R.drawable.help_dialog_bg);
-
-        addTaskDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                (dialog, which) -> {
-                    if (taskTitleEditText.getText().toString().isEmpty() && taskTextEditText.getText().toString().isEmpty())
-                        Toast.makeText(MainActivity.this, "No Task Entered!", Toast.LENGTH_SHORT).show();
-                    else {
-                        String taskTitle = taskTitleEditText.getText().toString();
-                        String taskText = taskTextEditText.getText().toString();
-                        if (taskTitle.isEmpty())
-                            taskTitle = " ";
-                        if (taskText.isEmpty())
-                            taskText = " ";
-
-                        Task task = new Task("Added: " + currentDate,
-                                "Last Edited: " + currentDate,
-                                taskTitle, taskText);
-                        addCurrentTask(task);
-                        if (currentState.toString().equals("CURRENT_TASKS"))
-                            switchToCurrentTasks();
-                        Toast.makeText(getBaseContext(), task.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        addTaskDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                (dialog, which) -> dialog.dismiss());
-
-        addTaskDialog.show();
-        addTaskDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-        addTaskDialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(Color.WHITE);
+        addTaskBottomSheetFragment.show(fragmentManager, addTaskBottomSheetFragment.getTag());
     }
 
     public ArrayList<Task> getCompletedTasks() {
@@ -164,6 +124,28 @@ public class MainActivity extends AppCompatActivity {
     public void addCurrentTask(Task newCurrentTask) {
         currentTasks.add(newCurrentTask);
         saveCurrentTasks(currentTasks);
+    }
+
+    public void addTaskFromFAB(String enteredTaskTitle, String enteredTaskText) {
+        if (enteredTaskText.isEmpty() && enteredTaskTitle.isEmpty())
+            Toast.makeText(MainActivity.this, "No Task Entered!", Toast.LENGTH_SHORT).show();
+        else {
+            String taskTitle = enteredTaskTitle;
+            String taskText = enteredTaskText;
+            if (taskTitle.isEmpty())
+                taskTitle = " ";
+            if (taskText.isEmpty())
+                taskText = " ";
+
+            Task task = new Task("Added: " + currentDate,
+                    "Last Edited: " + currentDate,
+                    taskTitle, taskText);
+            addCurrentTask(task);
+            if (currentState.toString().equals("CURRENT_TASKS"))
+                switchToCurrentTasks();
+            Toast.makeText(getBaseContext(), task.toString(), Toast.LENGTH_SHORT).show();
+            killAddTaskBottomSheetFragment();
+        }
     }
 
     public void updateTasks(ArrayList<Task> tasks) {
@@ -202,8 +184,12 @@ public class MainActivity extends AppCompatActivity {
         saveArchivedTasks(archivedTasks);
     }
 
-    public void hideFragment() {
+    public void hideNavBottomSheetFragment() {
         fragmentManager.beginTransaction().remove(bottomNavigationDrawerFragment).commit();
+    }
+
+    public void killAddTaskBottomSheetFragment() {
+        fragmentManager.beginTransaction().remove(addTaskBottomSheetFragment).commitAllowingStateLoss();
     }
 
     public void replaceFragment(Fragment fragment) {

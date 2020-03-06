@@ -2,7 +2,6 @@ package com.example.todolist.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,7 +28,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_bottomsheet, container, false);
+        View view = inflater.inflate(R.layout.fragment_bottomsheet_nav, container, false);
         initView(view);
         return view;
     }
@@ -66,7 +65,7 @@ public class BottomNavigationDrawerFragment extends BottomSheetDialogFragment {
                     getActivity().finish();
                     break;
             }
-            ((MainActivity) getContext()).hideFragment();
+            ((MainActivity) getContext()).hideNavBottomSheetFragment();
             return true;
         });
     }

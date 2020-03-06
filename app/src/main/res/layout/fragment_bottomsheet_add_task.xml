@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addTaskBottomSheetLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/rootAddTaskkBottomSheetLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/addTaskBottomSheetToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/addTaskTitleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
+            android:hint="Task Title"
+            android:paddingHorizontal="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="22sp"
+            android:imeOptions="actionNext"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/addTaskTextEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="15dp"
+            android:background="@android:color/transparent"
+            android:gravity="top"
+            android:hint="Task details"
+            android:paddingHorizontal="10dp"
+            android:textColor="@color/colorTasksText"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
