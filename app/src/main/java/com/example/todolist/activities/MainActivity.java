@@ -1,15 +1,11 @@
 package com.example.todolist.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,11 +24,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -106,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.addTaskFAB)
     public void onViewClicked() {
-        addTaskBottomSheetFragment.show(fragmentManager, addTaskBottomSheetFragment.getTag());
+        if (!addTaskBottomSheetFragment.isAdded())
+            addTaskBottomSheetFragment.show(fragmentManager, addTaskBottomSheetFragment.getTag());
     }
 
     public ArrayList<Task> getCompletedTasks() {
@@ -197,30 +191,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void switchToCurrentTasks() {
-            currentState = NavMenuStates.CURRENT_TASKS;
-            loadCurrentTasks();
-            fragment = new CurrentTasksFragment(currentTasks);
-            replaceFragment(fragment);
-            mainToolbar.setTitle("Current Tasks");
-            showFAB();
+        currentState = NavMenuStates.CURRENT_TASKS;
+        loadCurrentTasks();
+        fragment = new CurrentTasksFragment(currentTasks);
+        replaceFragment(fragment);
+        mainToolbar.setTitle("Current Tasks");
+        showFAB();
     }
 
     public void switchToCompletedTasks() {
-            currentState = NavMenuStates.COMPLETED_TASKS;
-            loadCompletedTasks();
-            fragment = new CompletedTasksFragment(completedTasks);
-            replaceFragment(fragment);
-            mainToolbar.setTitle("Completed Tasks");
-            showFAB();
+        currentState = NavMenuStates.COMPLETED_TASKS;
+        loadCompletedTasks();
+        fragment = new CompletedTasksFragment(completedTasks);
+        replaceFragment(fragment);
+        mainToolbar.setTitle("Completed Tasks");
+        showFAB();
     }
 
     public void switchToArchivedTasks() {
-            currentState = NavMenuStates.ARCHIVED_TASKS;
-            loadArchivedTasks();
-            fragment = new ArchivedTasksFragment(archivedTasks);
-            replaceFragment(fragment);
-            mainToolbar.setTitle("Archived Tasks");
-            showFAB();
+        currentState = NavMenuStates.ARCHIVED_TASKS;
+        loadArchivedTasks();
+        fragment = new ArchivedTasksFragment(archivedTasks);
+        replaceFragment(fragment);
+        mainToolbar.setTitle("Archived Tasks");
+        showFAB();
     }
 
     public void showSettingsFragment() {
@@ -263,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 currentTasksFile.createNewFile();
                 System.out.println("Current task file created");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -292,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 completedTasksFile.createNewFile();
                 System.out.println("Completed task file created");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -321,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 archivedTasksFile.createNewFile();
                 System.out.println("Archived task file created");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -334,7 +328,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (android.R.id.home == item.getItemId())
-            bottomNavigationDrawerFragment.show(fragmentManager, bottomNavigationDrawerFragment.getTag());
+            if (!bottomNavigationDrawerFragment.isAdded())
+                bottomNavigationDrawerFragment.show(fragmentManager, bottomNavigationDrawerFragment.getTag());
         return super.onOptionsItemSelected(item);
     }
 }

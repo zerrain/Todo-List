@@ -75,6 +75,8 @@ public class AddTaskBottomSheetFragment extends BottomSheetDialogFragment {
                 ((MainActivity) getContext()).killAddTaskBottomSheetFragment();
                 addTaskTextEditText.setText("");
                 addTaskTitleEditText.setText("");
+                ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(getView().getWindowToken(), 0);
             }
         });
 
@@ -87,6 +89,8 @@ public class AddTaskBottomSheetFragment extends BottomSheetDialogFragment {
                     ((MainActivity) getContext()).addTaskFromFAB(tasksTitle, tasksText);
                     addTaskTextEditText.setText("");
                     addTaskTitleEditText.setText("");
+                    ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 }
                 return true;
             }
